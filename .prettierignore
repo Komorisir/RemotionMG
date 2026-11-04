@@ -1,0 +1,9 @@
+node_modules
+out
+build
+dist
+coverage
+storybook-static
+pnpm-lock.yaml
+.husky/_
+public

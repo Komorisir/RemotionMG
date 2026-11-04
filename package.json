@@ -1,0 +1,88 @@
+{
+  "name": "remotion-mg",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Remotion + TypeScript + Less engineering scaffolding for MG (Motion Graphics) animation",
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=20.19.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "studio": "remotion studio",
+    "bundle": "remotion bundle",
+    "build": "remotion render src/index.ts Main out/main.mp4",
+    "build:still": "remotion still src/index.ts Main out/still.png --frame=60",
+    "storybook": "storybook dev -p 6006 --no-open --disable-telemetry",
+    "build:storybook": "storybook build -o storybook-static --disable-telemetry",
+    "storybook:smoke": "storybook dev -p 6007 --smoke-test --ci --disable-telemetry",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck:watch": "tsc --noEmit -p tsconfig.json --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.540",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.540"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "@remotion/bundler": "4.0.540",
+    "@remotion/eslint-config-flat": "4.0.540",
+    "@storybook/addon-docs": "10.6.5",
+    "@storybook/react-vite": "10.6.5",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "20.19.43",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitest/coverage-v8": "4.1.12",
+    "css-loader": "7.1.5",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "happy-dom": "21.0.4",
+    "husky": "9.1.7",
+    "less": "4.9.1",
+    "less-loader": "13.1.0",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.10",
+    "storybook": "10.6.5",
+    "style-loader": "4.0.0",
+    "tsconfig-paths-webpack-plugin": "4.2.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vitest": "4.1.12"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,less,mjs,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ],
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "schema-utils>webpack": "5"
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    /* ===== 目标与模块：交给 webpack(esbuild) 打包，tsc 只做类型检查 ===== */
+    "target": "ES2020",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+
+    /* ===== JSX：Remotion 4 使用 React 17+ 自动运行时 ===== */
+    "jsx": "react-jsx",
+
+    /* ===== 类型严格度 ===== */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    /* ===== 互操作 ===== */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* ===== 路径别名：与 remotion.config.ts 里的 TsconfigPathsPlugin 共用同一份配置 ===== */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  /* 测试、Storybook、vitest 配置都纳入 tsc 视野，否则它们只会在运行时炸 */
+  "include": ["src", "remotion.config.ts", "vitest.config.ts", "vitest.setup.ts", ".storybook"],
+  "exclude": ["node_modules", "out", "build", "dist", "coverage", "storybook-static"]
+}

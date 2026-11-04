@@ -1,0 +1,53 @@
+@import "./tokens.less";
+
+// 文件名带 .module -> CSS Modules 自动开启，类名被哈希化，不会和其他分镜串味
+.stage {
+  .center-flex();
+
+  width: 100%;
+  height: 100%;
+  background: @color-bg;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  padding: 64px 96px;
+  border-radius: @radius-card;
+  background: @color-surface;
+  box-shadow: 0 32px 80px fade(@color-shadow, 45%);
+}
+
+.title {
+  margin: 0;
+  font-size: 96px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: @color-accent;
+  // Less 内置函数：编译期算出浅色，运行时零成本
+  text-shadow: 0 0 48px fade(@color-accent, 35%);
+}
+
+.track {
+  width: 720px;
+  height: 12px;
+  overflow: hidden;
+  background: fade(@color-accent, 18%);
+  border-radius: @radius-bar;
+}
+
+.bar {
+  height: 100%;
+  background: linear-gradient(90deg, @color-accent, lighten(@color-accent, 18%));
+  border-radius: @radius-bar;
+}
+
+.caption {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: @color-muted;
+}

@@ -1,0 +1,15 @@
+@import "./tokens.less";
+
+// 不带 .module -> 全局样式（与 Remotion 内置 .css 行为一致）
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: @color-bg;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}

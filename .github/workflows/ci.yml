@@ -1,0 +1,145 @@
+name: CI
+
+# 触发策略：
+# - push / PR：跑完整质量门禁 + 双构建（Remotion bundle、Storybook 静态站）
+# - workflow_dispatch：可手动勾选「真实渲染冒烟」，额外验证 Chrome 下载与 Less 样式出片
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      render_smoke:
+        description: '额外执行真实渲染冒烟（会下载 Headless Chrome，约 2-3 分钟）'
+        type: boolean
+        default: false
+
+# 同一分支只保留最新一次流水线，避免排队浪费额度
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20.19.6'
+  PNPM_VERSION: '10.13.1'
+  TZ: 'Asia/Shanghai'
+
+jobs:
+  quality:
+    name: 质量门禁 · lint / typecheck / unit test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      # --frozen-lockfile：lockfile 与 package.json 不一致时直接失败，杜绝「本地能跑线上不能跑」
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test:coverage
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+
+  build:
+    name: 构建产物 · Remotion bundle + Storybook
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 只打包不渲染：验证 webpack 链路（Less 规则、@/ 别名、入口）是否成立
+      - name: Remotion bundle
+        run: pnpm bundle
+
+      - name: Storybook build
+        run: pnpm build:storybook
+
+      - name: Upload Storybook artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: storybook-static/
+          retention-days: 7
+
+  render-smoke:
+    name: 真实渲染冒烟 · 手动触发
+    runs-on: ubuntu-latest
+    needs: build
+    # 只有手动触发并显式勾选时才跑：Chrome 下载重，不适合每次提交都执行
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.render_smoke == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Remotion 把 Headless Chrome 缓存到 node_modules/.remotion，复用缓存可省 130MB 下载
+      - name: Cache Remotion browser
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.remotion
+          key: remotion-chrome-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Render a still frame
+        run: pnpm build:still
+
+      - name: Upload still frame
+        uses: actions/upload-artifact@v4
+        with:
+          name: still-frame
+          path: out/still.png
+          retention-days: 7
