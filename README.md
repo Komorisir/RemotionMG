@@ -174,11 +174,11 @@ RemotionMG/
 
 `.github/workflows/ci.yml`，触发条件：`push`（main/master）、`pull_request`、`workflow_dispatch`（可勾选 `render_smoke`）。
 
-| Job            | 依赖    | 执行内容                                                                                  |
-| -------------- | ------- | ----------------------------------------------------------------------------------------- |
-| `quality`      | —       | `pnpm install --frozen-lockfile` → `lint` → `typecheck` → `test:coverage`，上传覆盖率产物 |
-| `build`        | quality | `pnpm bundle` + `pnpm build:storybook`，上传 `storybook-static/`                          |
-| `render-smoke` | build   | 仅手动触发且勾选时执行：`pnpm build:still` 出图并上传 `out/still.png`                     |
+| Job            | 依赖    | 执行内容                                                                                                   |
+| -------------- | ------- | ---------------------------------------------------------------------------------------------------------- |
+| `quality`      | —       | `pnpm install --frozen-lockfile` → `lint` → `format:check` → `typecheck` → `test:coverage`，上传覆盖率产物 |
+| `build`        | quality | `pnpm bundle` + `pnpm build:storybook`，上传 `storybook-static/`                                           |
+| `render-smoke` | build   | 仅手动触发且勾选时执行：`pnpm build:still` 出图并上传 `out/still.png`                                      |
 
 - `--frozen-lockfile`：`package.json` 与 `pnpm-lock.yaml` 不一致时直接失败，杜绝「本地能跑、CI 装出另一套依赖」。
 - `node_modules/.remotion` 用 `actions/cache` 缓存（key 含 lockfile 哈希），命中时省掉 Headless Chrome 的下载。

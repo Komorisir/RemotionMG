@@ -235,18 +235,18 @@ RemotionMG/
 - **并发**：同 workflow + ref 只保留最新一条（`cancel-in-progress: true`）。
 - **权限**：`contents: read`。
 
-| job            | 依赖             | 内容                                                                                                                                |
-| -------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `quality`      | —                | `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm typecheck` → `pnpm test:coverage` → 上传 `coverage/`（7 天）                 |
-| `build`        | `needs: quality` | 安装 → `pnpm bundle` → `pnpm build:storybook` → 上传 `storybook-static/`（7 天）                                                    |
-| `render-smoke` | `needs: build`   | **仅当** `workflow_dispatch` 且 `render_smoke == 'true'`：缓存 `node_modules/.remotion` → `pnpm build:still` → 上传 `out/still.png` |
+| job            | 依赖             | 内容                                                                                                                                      |
+| -------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `quality`      | —                | `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm format:check` → `pnpm typecheck` → `pnpm test:coverage` → 上传 `coverage/`（7 天） |
+| `build`        | `needs: quality` | 安装 → `pnpm bundle` → `pnpm build:storybook` → 上传 `storybook-static/`（7 天）                                                          |
+| `render-smoke` | `needs: build`   | **仅当** `workflow_dispatch` 且 `render_smoke == 'true'`：缓存 `node_modules/.remotion` → `pnpm build:still` → 上传 `out/still.png`       |
 
 ### 5.2 本地复刻 CI（推送前的最小闭环）
 
 ```bash
 pnpm install --frozen-lockfile   # 复刻 CI 的安装门禁
 pnpm check                       # lint + typecheck + test
-pnpm format:check                # `check` 不含格式化校验，CI 也不跑这条 —— 格式问题只能靠它发现
+pnpm format:check                # `check` 不含格式化校验；这条与 CI 门禁一致，本地必须补跑
 pnpm bundle                      # 验证 webpack 链路（Less 规则、@/ 别名、入口）
 ```
 
@@ -256,7 +256,6 @@ pnpm bundle                      # 验证 webpack 链路（Less 规则、@/ 别�
 
 - 最近一次线上运行：提交 `66e085d`，结论 **passing**（`quality` + `build` 通过，`render-smoke` 按设计 skipped）。
 - **`render-smoke` 尚未在 CI 上真实执行过**：ubuntu 上的 Chrome 系统依赖、缓存 key 是否命中都未经线上验证。想验证请手动触发（Actions → CI → Run workflow → 勾选 `render_smoke`）。
-- **CI 不校验格式化**：`.github/workflows/ci.yml` 只跑 `lint` / `typecheck` / `test:coverage` / `bundle` / `build:storybook`，**没有 `format:check`**。格式跑偏不会让 CI 变红，也就不会有任何地方拦住它。
 - **覆盖率没有阈值门禁**：`vitest.config.ts` 未配置 `coverage.thresholds`，`test:coverage` 只产出报告。因此覆盖率数字**不能**当作验证充分的证明。
 
 ## 6. 给 AI 助手的执行流程与禁区
@@ -287,7 +286,7 @@ pnpm bundle                      # 验证 webpack 链路（Less 规则、@/ 别�
 
 ### 6.3 禁区（每条都附事实依据）
 
-1. **不许为了让检查通过而改检查配置**。依据：CI 门禁就是 `lint` / `typecheck` / `test` 这三条命令，改规则等于改尺子，不是修问题。
+1. **不许为了让检查通过而改检查配置**。依据：CI 门禁就是 `lint` / `format:check` / `typecheck` / `test:coverage` 这四条命令，改规则等于改尺子，不是修问题。
 2. **不许手改 `pnpm-lock.yaml`**。依据：`--frozen-lockfile` 会比对 `package.json` 与 lockfile 的 specifier，手改必然对不上。
 3. **依赖变更必须连同 lockfile 一起提交**。依据同上，否则 CI 直接 `ERR_PNPM_OUTDATED_LOCKFILE`。
 4. **不许提交构建产物**：`out/` `build/` `dist/` `coverage/` `storybook-static/` `node_modules/`。依据：`.gitignore` 已覆盖；CI 通过 artifact 取产物，仓库里只留源码。

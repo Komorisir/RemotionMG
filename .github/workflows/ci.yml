@@ -53,6 +53,10 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      # 与 Prettier 单一标准对齐：格式跑偏在这里拦下，而不是靠 review 目检
+      - name: Format check
+        run: pnpm format:check
+
       - name: Typecheck
         run: pnpm typecheck
 
