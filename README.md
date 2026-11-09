@@ -1,7 +1,13 @@
 # RemotionMG
 
-使用 [Remotion](https://www.remotion.dev/) 制作 MG（Motion Graphics）动画的工程骨架。
-本仓库只做**工程化搭建**，不包含具体分镜内容；组件与样式均为验证工具链可用的占位实现。
+使用 [Remotion](https://www.remotion.dev/) 制作 MG（Motion Graphics）动画的工程。
+
+当前包含两个 Composition：
+
+| Composition   | 说明                                                                                                                                                                                                     | 规格                       |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| `Main`        | 工程骨架自带的标题动效占位                                                                                                                                                                               | 1920×1080 / 30fps / 120 帧 |
+| `PageBuilder` | **前端页面搭建可视化**：从一块纯色空窗口开始，14 支协作光标分四组接力、按 107 笔作业逐元素拖出整页仪表盘（导航下划线、KPI 数字、图例都单独拖出来），叠加选框/尺寸标签/参考线；每支光标投完自己的活就退场 | 1920×1080 / 30fps / 900 帧 |
 
 ## 技术栈
 
@@ -70,18 +76,26 @@ RemotionMG/
 │   ├── Root.tsx                # 所有 Composition 的注册中心
 │   ├── animations/             # 纯函数动画层（不依赖 Remotion 上下文，可直接单测）
 │   │   ├── mgTitle.ts
-│   │   └── mgTitle.test.ts
+│   │   ├── mgTitle.test.ts
+│   │   ├── pageBuilder.ts      # PageBuilder 时间轴：搭建脚本 / 拖拽揭示 / 选框 / 光标位姿
+│   │   └── pageBuilder.test.ts
 │   ├── compositions/           # 分镜组件（一个分镜一个文件）
 │   │   ├── MGTitle.tsx         # 适配层：Remotion Hook → getTitleMotion → 视图
 │   │   ├── MGTitleView.tsx     # 视图层：只吃 props，可被 Storybook / 单测直接喂数据
 │   │   ├── MGTitleView.stories.tsx
-│   │   └── MGTitleView.test.tsx
+│   │   ├── MGTitleView.test.tsx
+│   │   ├── PageBuilder.tsx     # 适配层：帧号 → 各层进度
+│   │   └── PageBuilderView.tsx # 视图层：窗口外壳 / 13 个区块 / 手势层（选框、参考线、14 支光标）
 │   ├── config/                 # 全局配置常量（帧率/分辨率/字体等）
 │   │   ├── video.ts
-│   │   └── video.test.ts
+│   │   ├── video.test.ts
+│   │   └── builder.ts          # PageBuilder 规格 + 调色板
+│   ├── data/
+│   │   └── builderLayout.ts    # 仪表盘版面几何、演示数据、世界地图点阵（Natural Earth 光栅化）
 │   ├── styles/
 │   │   ├── tokens.less         # 设计令牌：变量 + 混入，无 CSS 输出
 │   │   ├── MGTitle.module.less # 组件样式（CSS Modules，局部作用域）
+│   │   ├── PageBuilder.module.less
 │   │   └── global.less         # 全局样式（重置）
 │   └── types/
 │       └── styles.d.ts         # *.less / *.module.less 的环境声明
@@ -141,12 +155,13 @@ RemotionMG/
 
 **测什么**
 
-| 层         | 文件                                    | 断言内容                                                                                                      |
-| ---------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| 动画纯函数 | `src/animations/mgTitle.test.ts`        | 0 帧入场值为 0、进度条起止帧、末尾越界帧被 clamp、`durationInFrames` 变短时终点不回退                         |
-| 配置常量   | `src/config/video.test.ts`              | 分辨率/帧率/时长为正数、时长为整数、`FONT_STACK` 非空                                                         |
-| 视图组件   | `src/compositions/MGTitleView.test.tsx` | 标题文本渲染、CSS Modules 类名挂载、进度条 `width` 随 `sweepPercent` 变化、`opacity`/`translateY` 跟随 motion |
-| 适配层     | `src/compositions/MGTitle.test.tsx`     | mock 掉两个时间 Hook，验证帧号被正确接到 `getTitleMotion`、`title` 透传视图层                                 |
+| 层         | 文件                                    | 断言内容                                                                                                                                                            |
+| ---------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 动画纯函数 | `src/animations/mgTitle.test.ts`        | 0 帧入场值为 0、进度条起止帧、末尾越界帧被 clamp、`durationInFrames` 变短时终点不回退                                                                               |
+| 配置常量   | `src/config/video.test.ts`              | 分辨率/帧率/时长为正数、时长为整数、`FONT_STACK` 非空                                                                                                               |
+| 视图组件   | `src/compositions/MGTitleView.test.tsx` | 标题文本渲染、CSS Modules 类名挂载、进度条 `width` 随 `sweepPercent` 变化、`opacity`/`translateY` 跟随 motion                                                       |
+| 适配层     | `src/compositions/MGTitle.test.tsx`     | mock 掉两个时间 Hook，验证帧号被正确接到 `getTitleMotion`、`title` 透传视图层                                                                                       |
+| 建造编排   | `src/animations/pageBuilder.test.ts`    | 107 笔作业 id 唯一且各有归属光标、子元素晚于父元素、片头全 0 收工全 1、选框只在拖拽期亮、数字逐位滚动不丢分隔符、光标生命周期外 presence 为 0 且同时在场不超过 7 支 |
 
 **不测什么（明确边界）**
 
@@ -191,6 +206,8 @@ RemotionMG/
 - TypeScript 采用 **5.9.3** 而不是最新的 7.0.2：TS 7 是原生重写版，类型检查行为与社区生态仍在磨合，Remotion 官方模板与 `typescript-eslint` 也以 5.9 为基线。
 - Vitest 采用 **4.1.12** 而不是最新的 5.1.0：Vitest 5 的 `engines` 要求 Node ^22.12 || ^24 || >=26，与 Node 20 LTS 不兼容。
 - 1920×1080 / 30fps / 120 帧（4 秒）为占位规格，正式分镜请改 `src/config/video.ts`。
+- `PageBuilder` 的规格独立放在 `src/config/builder.ts`（1920×1080 / 30fps / 900 帧 = 30 秒），与占位片互不影响；元素多，节奏必须放慢。
+- 世界地图不依赖图片/网络：用 Natural Earth 110m 陆地数据离线光栅化成 92×42 的点阵字符串，内嵌在 `src/data/builderLayout.ts` 里。
 - 尚未接入：e2e/视觉回归测试、发布流水线（打 tag 自动出片）。当前单测只覆盖时间轴逻辑与视图层。
 
 ## 已知提示

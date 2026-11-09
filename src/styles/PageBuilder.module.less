@@ -1,0 +1,678 @@
+@import "./tokens.less";
+
+/* PageBuilder：深色仪表盘 + 设计工具手势层 */
+
+.stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 0%, #10131a 0%, #08090d 45%, #050609 100%);
+  font-family: -apple-system, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+  color: #e9ecf1;
+  font-feature-settings: "tnum" 1;
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.045) 0.5px, transparent 0.5px);
+  background-size: 3px 3px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ===================== 窗口外壳 ===================== */
+
+.windowShell {
+  position: absolute;
+  border-radius: 10px;
+  background: #0e1014;
+  border: 1px solid #232833;
+  box-shadow:
+    0 60px 160px rgba(0, 0, 0, 0.72),
+    0 8px 36px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  transform-origin: 50% 45%;
+}
+
+.chromeSlot {
+  border-radius: 0;
+}
+
+/* 应用外壳的背景条：本身随拖拽生长，里面的品牌与菜单各自再入场 */
+.chromeBg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 22px;
+  gap: 26px;
+  background: #12151a;
+  border-bottom: 1px solid #1e232c;
+}
+
+.chrome {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 22px;
+  gap: 26px;
+  background: #12151a;
+  border-bottom: 1px solid #1e232c;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.brandMark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: linear-gradient(160deg, #3d434f, #1b1f27);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #dfe4ee;
+}
+
+.brandName {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: #eef1f7;
+}
+
+.chromeNav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  color: #8a93a6;
+  white-space: nowrap;
+}
+
+.navItemActive {
+  color: #e9ecf1;
+}
+
+.navGlyph {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1.2px solid currentColor;
+  opacity: 0.65;
+}
+
+.navItem {
+  position: relative;
+}
+
+/* 菜单项的下划线：每个菜单项自己扫入一段 */
+.navLine {
+  height: 1.6px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, rgba(63, 123, 255, 0.15), #3f7bff 70%, #5b8dff);
+}
+
+.navCaret {
+  font-size: 9px;
+  opacity: 0.5;
+}
+
+.chromeRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 0 0 auto;
+}
+
+.chip {
+  font-size: 12.5px;
+  color: #9aa3b6;
+  padding: 5px 11px;
+  border-radius: 6px;
+  border: 1px solid #262c37;
+  background: #161a21;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #4a5162, #262b36);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.identityName {
+  font-size: 12.5px;
+  color: #dfe4ee;
+}
+
+.identityRole {
+  font-size: 10.5px;
+  color: #6d7688;
+}
+
+/* ===================== 页头 ===================== */
+
+.pageHeader {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  color: #6d7688;
+  text-transform: uppercase;
+}
+
+.pageTitle {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: #f2f5fa;
+  margin-top: 4px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ghostBtn {
+  white-space: nowrap;
+  font-size: 13px;
+  color: #c3cbd9;
+  padding: 9px 16px;
+  border-radius: 7px;
+  border: 1px solid #2a303c;
+  background: #171b22;
+}
+
+.primaryBtn {
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, #3f7bff, #2a5fe0);
+  box-shadow: 0 4px 14px rgba(47, 107, 255, 0.35);
+}
+
+/* ===================== 区块 ===================== */
+
+.blockLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.block {
+  position: absolute;
+  border-radius: 6px;
+}
+
+.wire {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  border: 1px dashed rgba(140, 160, 190, 0.34);
+  background: rgba(255, 255, 255, 0.028);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 22px;
+  overflow: hidden;
+}
+
+.wireBar {
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(180, 198, 224, 0.16);
+}
+
+/* 拖拽过程中盖在元素上的虚线线框，内容一上来就退场 */
+.wireFill {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  border: 1px dashed rgba(150, 172, 208, 0.42);
+  background:
+    linear-gradient(180deg, rgba(120, 145, 185, 0.07), rgba(120, 145, 185, 0.03)),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0 6px, transparent 6px 12px);
+  pointer-events: none;
+}
+
+.wireTag {
+  position: absolute;
+  top: 9px;
+  left: 13px;
+  font-size: 10.5px;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: rgba(150, 168, 196, 0.55);
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #181d26 0%, #151920 100%);
+  border: 1px solid #232833;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 卡片本体已成形、内部内容还在那一刻：只留底板 */
+.cardGhost {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #181d26 0%, #151920 100%);
+  pointer-events: none;
+}
+
+.cardTitle {
+  font-size: 13.5px;
+  color: #c7cedb;
+  letter-spacing: 0.1px;
+}
+
+.cardMeta {
+  font-size: 12px;
+  color: #6f7889;
+}
+
+/* ===================== 各类卡片内容 ===================== */
+
+.heroTitle {
+  font-size: 23px;
+  font-weight: 600;
+  color: #f2f5fa;
+}
+
+.heroSub {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #7d8698;
+  max-width: 300px;
+  margin-top: 8px;
+}
+
+.heroStats {
+  display: flex;
+  gap: 34px;
+  margin-top: auto;
+}
+
+.statLabel {
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  color: #6a7385;
+}
+
+.statValue {
+  font-size: 21px;
+  font-weight: 600;
+  color: #eef1f7;
+  margin-top: 5px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.deltaUp {
+  font-size: 11px;
+  font-weight: 600;
+  color: #37c978;
+}
+
+.deltaDown {
+  font-size: 11px;
+  font-weight: 600;
+  color: #f2545b;
+}
+
+.progressTrack {
+  height: 5px;
+  border-radius: 3px;
+  background: #22272f;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #2f6bff, #5b8dff);
+}
+
+/* hero 卡右上角的完成度圆环 */
+.goalRing {
+  position: relative;
+  width: 84px;
+  height: 84px;
+}
+
+.goalCap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  font-size: 9px;
+  letter-spacing: 1.1px;
+  color: #6f7889;
+}
+
+/* 圆环下方的涨跌胶囊 */
+.goalPill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #cfe0ff;
+  background: rgba(47, 107, 255, 0.16);
+  border: 1px solid rgba(91, 141, 255, 0.34);
+}
+
+.sparkWrap {
+  margin-top: auto;
+}
+
+.ringWrap {
+  position: relative;
+  margin-left: auto;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ringText {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.ringCap {
+  font-size: 9.5px;
+  letter-spacing: 1.2px;
+  color: #6f7889;
+}
+
+.ringVal {
+  font-size: 27px;
+  font-weight: 600;
+  color: #eef1f7;
+  margin-top: 3px;
+}
+
+.tileRow {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.tileIcon {
+  width: 46px;
+  height: 46px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.tileIconBlue {
+  background: linear-gradient(180deg, #3f7bff, #2a5fe0);
+  box-shadow: 0 6px 16px rgba(47, 107, 255, 0.3);
+}
+
+.tileIconGreen {
+  background: linear-gradient(180deg, #34d17f, #1f9f5e);
+  box-shadow: 0 6px 16px rgba(55, 201, 120, 0.28);
+}
+
+.tileIconDark {
+  background: #22272f;
+  border: 1px solid #2c323d;
+}
+
+.tileTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #eef1f7;
+}
+
+.tileSub {
+  font-size: 12px;
+  color: #6f7889;
+  margin-top: 3px;
+}
+
+.chartHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.legend {
+  display: flex;
+  gap: 18px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #8a93a6;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  margin-top: auto;
+  height: 168px;
+}
+
+.barCol {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.barSeg {
+  border-radius: 2px 2px 0 0;
+}
+
+.axis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: #596173;
+  padding-top: 8px;
+}
+
+/* 坐标轴横线：单独一笔拖出来 */
+.axisRule {
+  height: 1px;
+  background: #1e232c;
+}
+
+.mapWrap {
+  position: relative;
+  margin-top: auto;
+  align-self: center;
+}
+
+.mapDot {
+  fill: rgba(120, 145, 180, 0.5);
+}
+
+/* ===================== 收尾字幕 ===================== */
+
+.outroCaption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  color: #7e88a0;
+}
+
+.outroDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ad991;
+  box-shadow: 0 0 10px rgba(74, 217, 145, 0.7);
+}
+
+/* ===================== 设计工具手势层 ===================== */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.selRect {
+  position: absolute;
+  border: 1.6px solid #2f95ff;
+  box-shadow:
+    0 0 0 1px rgba(47, 149, 255, 0.18),
+    0 0 26px rgba(47, 149, 255, 0.22);
+  border-radius: 2px;
+}
+
+.handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border: 1.4px solid #2f95ff;
+  border-radius: 1px;
+}
+
+.selLabel {
+  position: absolute;
+  top: -25px;
+  left: -1.6px;
+  background: #2f95ff;
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 3px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+.guideV {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #2ee6d6;
+  opacity: 0.85;
+}
+
+.guideH {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #ff5fd2;
+  opacity: 0.8;
+}
+
+.guideTag {
+  position: absolute;
+  font-size: 10.5px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #07100f;
+  font-weight: 600;
+}
+
+.cursor {
+  position: absolute;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  transform: translate(-2px, -2px);
+}
+
+.cursorLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: #0a0c10;
+  padding: 2px 7px;
+  border-radius: 4px 4px 4px 0;
+  white-space: nowrap;
+  margin-top: 15px;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.6px solid currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background: radial-gradient(circle at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.55) 100%);
+}

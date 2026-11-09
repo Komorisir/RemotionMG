@@ -1,6 +1,8 @@
 import type { FC } from 'react'
 import { Composition, Folder } from 'remotion'
 import { MGTitle } from '@/compositions/MGTitle'
+import { PageBuilder } from '@/compositions/PageBuilder'
+import { BUILDER } from '@/config/builder'
 import { VIDEO } from '@/config/video'
 
 /**
@@ -9,16 +11,28 @@ import { VIDEO } from '@/config/video'
  */
 export const RemotionRoot: FC = () => {
   return (
-    <Folder name='MG'>
-      <Composition
-        id='Main'
-        component={MGTitle}
-        durationInFrames={VIDEO.durationInFrames}
-        fps={VIDEO.fps}
-        width={VIDEO.width}
-        height={VIDEO.height}
-        defaultProps={{ title: 'Remotion MG' }}
-      />
-    </Folder>
+    <>
+      <Folder name='MG'>
+        <Composition
+          id='Main'
+          component={MGTitle}
+          durationInFrames={VIDEO.durationInFrames}
+          fps={VIDEO.fps}
+          width={VIDEO.width}
+          height={VIDEO.height}
+          defaultProps={{ title: 'Remotion MG' }}
+        />
+      </Folder>
+      <Folder name='PageBuilder'>
+        <Composition
+          id='PageBuilder'
+          component={PageBuilder}
+          durationInFrames={BUILDER.durationInFrames}
+          fps={BUILDER.fps}
+          width={BUILDER.width}
+          height={BUILDER.height}
+        />
+      </Folder>
+    </>
   )
 }
